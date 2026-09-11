@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=yes">
+<meta name="format-detection" content="telephone=no">
+<title>牛马鉴定中心 | 30题测出你是哪种牛马</title>
+<script src="https://unpkg.com/qrcodejs@1.0.0/qrcode.min.js" onerror="this.src='https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#111118;--bg2:#1a1a22;--bg3:#222230;--ac:#D4A853;--ac2:#E8C06A;--acg:rgba(212,168,83,0.15);--tx:#e8e4d8;--tx2:#99948a;--cd:#1e1e28;--bd:#33332a}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+html{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--tx);-webkit-font-smoothing:antialiased}
+body{margin:0;padding:0;min-height:100vh;display:flex;justify-content:center}
+#app{width:100%;max-width:420px;min-height:100vh;position:relative;background-image:radial-gradient(ellipse 6px 8px at 20px 20px,rgba(212,168,83,0.03) 0%,transparent 100%),radial-gradient(ellipse 5px 7px at 60px 50px,rgba(212,168,83,0.025) 0%,transparent 100%),radial-gradient(ellipse 6px 8px at 40px 80px,rgba(212,168,83,0.02) 0%,transparent 100%);background-size:80px 100px,80px 100px,80px 100px}
+.S{display:none;flex-direction:column;padding:24px 20px;min-height:100vh;animation:fi .4s ease}
+.S.on{display:flex}
+@keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes si{from{opacity:0;transform:translateX(25px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pu{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes gl{0%,100%{box-shadow:0 0 20px rgba(212,168,83,.2)}50%{box-shadow:0 0 35px rgba(212,168,83,.45)}}
+@keyframes staminaPulse{0%,100%{opacity:1}50%{opacity:.7}}
+
+/* ===== Intro ===== */
+.iw{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:14px}
+.ib{display:inline-block;background:var(--ac);color:#111;font-size:10px;font-weight:800;padding:4px 14px;border-radius:20px;letter-spacing:3px}
+.it{font-size:34px;font-weight:900;line-height:1.25;background:linear-gradient(135deg,var(--ac),#fff8e0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.is{font-size:16px;color:var(--tx2);margin-top:-4px}
+.id{font-size:56px;margin:6px 0;filter:drop-shadow(0 0 18px rgba(212,168,83,.3))}
+.ist{display:flex;gap:20px;justify-content:center}
+.ist div{text-align:center}
+.ist .n{font-size:26px;font-weight:800;color:var(--ac)}
+.ist .l{font-size:10px;color:var(--tx2);margin-top:2px}
+.bs{background:var(--ac);color:#111;border:none;padding:16px 52px;border-radius:50px;font-size:16px;font-weight:800;cursor:pointer;animation:gl 2.5s ease-in-out infinite;letter-spacing:1px;-webkit-tap-highlight-color:transparent}
+.bs:active{transform:scale(.95)}
+.ino{font-size:11px;color:var(--tx2);line-height:1.6;max-width:280px}
+
+/* ===== Fence divider ===== */
+.fence{width:100%;height:12px;background:repeating-linear-gradient(90deg,transparent,transparent 18px,var(--ac) 18px,var(--ac) 20px);opacity:.12;margin:10px 0;border-radius:2px}
+
+/* ===== Question ===== */
+.qh{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-top:8px}
+.pb{flex:1;height:10px;background:var(--bg3);border-radius:10px;overflow:hidden;border:1px solid var(--bd);position:relative}
+.pf{height:100%;background:linear-gradient(90deg,#8B6914,var(--ac),var(--ac2));border-radius:10px;transition:width .4s cubic-bezier(.4,0,.2,1);position:relative}
+.pf::after{content:'🐴';position:absolute;right:-2px;top:50%;transform:translateY(-50%);font-size:12px;line-height:1}
+.ptx{font-size:12px;color:var(--ac);font-weight:700;white-space:nowrap;min-width:56px;text-align:right}
+.ptx span{font-size:9px;color:var(--tx2);display:block;font-weight:400}
+.qb{flex:1;display:flex;flex-direction:column;justify-content:center}
+.qs{animation:si .32s ease}
+.qt{font-size:18px;font-weight:700;line-height:1.65;margin-bottom:22px;color:#fff}
+.qo{display:flex;flex-direction:column;gap:10px}
+.op{background:var(--cd);border:1.5px solid var(--bd);border-radius:14px;padding:14px 16px;font-size:14px;line-height:1.55;cursor:pointer;transition:all .15s;color:var(--tx);text-align:left;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;display:flex;align-items:flex-start;gap:10px}
+.op:active{transform:scale(.98)}
+.op.sel{border-color:var(--ac);background:var(--acg);color:#fff}
+.op.sel::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--ac)}
+.og{font-size:18px;flex-shrink:0;line-height:1.3;margin-top:1px}
+
+/* ===== Result ===== */
+.rw{flex:1;display:flex;flex-direction:column;align-items:center;gap:16px;padding-bottom:40px}
+.re{text-align:center;padding-top:14px}
+.rem{font-size:64px;display:block;margin-bottom:4px;animation:pu 2s ease-in-out infinite}
+.rn{font-size:26px;font-weight:900;color:#fff;margin-bottom:3px}
+.rne{font-size:12px;color:var(--ac);font-weight:700;letter-spacing:2px}
+.rq{font-size:15px;color:var(--ac);font-style:italic;text-align:center;padding:12px 18px;position:relative;line-height:1.6}
+.rq::before{content:'\201C';font-size:42px;color:var(--ac);opacity:.3;position:absolute;top:-8px;left:4px;font-family:Georgia,serif}
+.rd{font-size:13.5px;line-height:1.85;color:var(--tx2);text-align:justify;padding:0 2px}
+.rsc{width:100%;text-align:center}
+.rst{font-size:12px;color:var(--tx2);margin-bottom:10px;font-weight:600;letter-spacing:1px}
+.radar-svg{max-width:320px;width:100%;height:auto}
+
+/* ===== Card ===== */
+.sc{width:100%;max-width:375px;background:linear-gradient(160deg,#1e1c18,#2a2518 50%,#1e1c18);border-radius:20px;padding:26px 20px;border:1px solid rgba(212,168,83,.2);position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;top:-40%;right:-40%;width:80%;height:80%;background:radial-gradient(circle,rgba(212,168,83,.06),transparent 70%);pointer-events:none}
+.ct{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;position:relative;z-index:1}
+.cb{font-size:9px;color:var(--tx2);letter-spacing:1px}
+.ck{font-size:9px;color:var(--ac);letter-spacing:1px;border:1px solid rgba(212,168,83,.3);padding:2px 8px;border-radius:10px}
+.ce{font-size:44px;text-align:center;margin-bottom:4px;position:relative;z-index:1}
+.cn{font-size:20px;font-weight:900;color:#fff;text-align:center;margin-bottom:2px;position:relative;z-index:1}
+.cne{font-size:10px;color:var(--ac);text-align:center;letter-spacing:2px;margin-bottom:10px;position:relative;z-index:1}
+.cq{font-size:12.5px;color:var(--ac);font-style:italic;text-align:center;padding:6px 14px;position:relative;z-index:1;line-height:1.5;opacity:.85}
+.cdv{width:36px;height:2px;background:var(--ac);margin:10px auto;opacity:.35;position:relative;z-index:1}
+.cm{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;position:relative;z-index:1}
+.ci{display:flex;align-items:center;gap:4px;font-size:10px}
+.cin{color:var(--tx2);min-width:50px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cib{flex:1;height:3px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.cif{height:100%;border-radius:3px;background:var(--ac)}
+.civ{color:var(--ac);font-weight:700;min-width:16px;text-align:right;font-size:9px}
+.cf{text-align:center;margin-top:12px;position:relative;z-index:1}
+.cft{font-size:8px;color:var(--tx2);letter-spacing:1px;opacity:.5}
+
+/* ===== Buttons ===== */
+.br{display:flex;gap:10px;width:100%;margin-top:2px;flex-wrap:wrap}
+.b1{flex:1;background:transparent;border:1.5px solid var(--bd);color:var(--tx2);padding:13px;border-radius:50px;font-size:13px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;min-width:0}
+.b1:active{border-color:var(--ac);color:var(--ac)}
+.b2{flex:1;background:var(--ac);color:#111;border:none;padding:13px;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;min-width:0}
+.b2:active{transform:scale(.96)}
+.b3{flex:1;background:linear-gradient(135deg,#8B6914,var(--ac));color:#111;border:none;padding:13px;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;min-width:0}
+.b3:active{transform:scale(.96)}
+
+/* ===== QR Hidden ===== */
+#qrHidden{position:fixed;left:-9999px;top:-9999px;visibility:hidden}
+
+/* ===== Certificate Canvas Hidden ===== */
+#certCanvas{display:none}
+
+::-webkit-scrollbar{width:0;background:transparent}
+@media(max-width:360px){.it{font-size:28px}.qt{font-size:16px}.rn{font-size:22px}}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="s0" class="S on"></div>
+<div id="s1" class="S"></div>
+<div id="s2" class="S"></div>
+</div>
+<div id="qrHidden"></div>
+<canvas id="certCanvas"></canvas>
+
+<script>
+try{
+var DN=["卷度指数","摸鱼段位","甩锅功力","向上管理","玻璃心指数","背锅体质","社交面具","准时信仰","会议生存力","情绪劳动","信息嗅觉","汇报美化度","团建热情","工位执念","抗压韧性"];
+var DK=["D1","D2","D3","D4","D5","D6","D7","D8","D9","D10","D11","D12","D13","D14","D15"];
+var OPT_EMOJI=['🐂','🐴','🫏','🐑'];
+
+var Q=[
+{"t":"周五下午5:58，老板在群里发了句\u201c谁来对一下方案\u201d，你：","o":[["秒回\u201c好的\u201d然后加班到8点",{"D1":2,"D4":2}],["假装没看到，6点准时消失",{"D8":2,"D2":2}],["回\u201c在路上了\u201d然后继续下班",{"D3":2,"D7":2}],["转发给同事\u201c你比较熟这个，你来？\u201d",{"D3":2,"D11":2}]]},
+{"t":"开会2小时，你实际有效发言的时长大约：","o":[["全程在输出，别人插不上嘴",{"D9":2,"D4":2}],["说了3-5句，都是关键句",{"D9":1,"D7":2}],["点头+微笑+假装在记笔记",{"D10":2,"D9":-1}],["在手机上看完了半本书",{"D2":2,"D9":-2}]]},
+{"t":"你发现同事的方案有个明显错误，但这个方案是他当着老板面汇报的，你：","o":[["当场指出来，错误不能容忍",{"D5":-2,"D3":-2}],["会后私下告诉他",{"D7":2,"D10":2}],["微笑鼓掌，关我什么事",{"D10":2,"D2":1}],["在群里\u201c无意间\u201d提到类似问题引起讨论",{"D11":2,"D4":1}]]},
+{"t":"你的工位上有几样东西？","o":[["电脑、水杯，没了",{"D14":-2}],["有绿植和几个手办",{"D14":2}],["零食柜、靠垫、加湿器、小风扇，一个都不能少",{"D14":3}],["经常换工位，我东西都在云上",{"D14":-2,"D2":1}]]},
+{"t":"甲方/客户突然推翻了已经确认的需求，你第一反应：","o":[["深呼吸，微笑回复\u201c没问题，我们调整一下\u201d",{"D15":2,"D10":2}],["在工位上无声崩溃3分钟再继续",{"D5":2,"D15":-1}],["立刻拉群让产品和老板来对接",{"D3":2,"D6":2}],["内心已经写好了辞职信",{"D5":2,"D1":-1}]]},
+{"t":"团建通知出来了——周六爬山+烧烤，你的反应：","o":[["立刻报名，主动负责拍照和搞气氛",{"D13":2,"D7":2}],["去，但全程戴耳机听播客",{"D13":-1,"D7":2}],["称病不去，终于有了正当理由",{"D13":-2}],["去了但在山脚下等大家下来一起吃烧烤",{"D13":-1,"D2":1}]]},
+{"t":"写周报时，你这周其实没干什么大事，你：","o":[["实事求是写\u201c本周常规工作推进中\u201d",{"D12":-2}],["把小事拆成5条，加上\u201c协同\u201d\u201c推动\u201d\u201c优化\u201d等动词",{"D12":2}],["参考上周周报换个说法复制粘贴",{"D12":3,"D2":1}],["拖到周日晚上11点才写",{"D1":-1}]]},
+{"t":"隔壁工位同事外放刷短视频，你：","o":[["直接说\u201c能戴耳机吗\u201d",{"D10":-2,"D5":-1}],["戴上降噪耳机，眼不见心不烦",{"D14":1,"D10":1}],["发朋友圈内涵\u201c有些人真的没有公德心\u201d",{"D10":2,"D5":2}],["跟着一起看，顺便聊起来了",{"D11":2,"D7":-1}]]},
+{"t":"老板安排了一件明显不属于你岗位职责的事，你：","o":[["照做，老板说的都对",{"D4":2,"D3":-1,"D1":1}],["礼貌询问\u201c这个是不是更适合XX部门？\u201d",{"D3":2,"D4":1}],["接了，然后以\u201c不太熟悉\u201d为由拖到别人接手",{"D3":2,"D2":1}],["内心翻白眼但表面微笑接下",{"D10":2,"D5":1}]]},
+{"t":"午饭时间，你通常：","o":[["和固定同事一起，聊工作也聊八卦",{"D11":2,"D13":1}],["独自吃饭+刷手机，这是我最珍贵的独处时间",{"D13":-2,"D8":1}],["边吃饭边回消息处理工作",{"D1":2,"D10":1}],["等到12:30人少了再去食堂/点外卖",{"D2":1,"D14":1}]]},
+{"t":"公司传来裁员传闻（未经证实），你：","o":[["立刻开始更新简历、刷招聘网站",{"D15":-1,"D5":2}],["四处打听消息来源，确认是真是假",{"D11":2}],["该干嘛干嘛，裁不裁的无所谓",{"D15":2}],["加倍努力工作表现自己",{"D1":2,"D4":2,"D5":1}]]},
+{"t":"你在电梯里遇到一个不熟的领导，电梯还有20层才到，你：","o":[["主动打招呼，顺便聊几句天气",{"D4":2,"D7":2}],["低头看手机假装在回重要消息",{"D4":-1,"D2":1}],["掏出耳机，\u201c啊我在听语音\u201d",{"D2":2,"D7":1}],["尴尬地站着，内心倒计时等电梯停",{"D5":2,"D4":-1}]]},
+{"t":"项目出了重大问题，需要有人负责，你：","o":[["主动站出来承担责任然后加班补救",{"D1":2,"D15":2,"D6":-1}],["先分析是谁的责任，在群里留好证据链",{"D3":2,"D11":2}],["沉默，等别人先开口",{"D3":1,"D6":2}],["私聊领导表忠心，\u201c不管怎样我都和您站在一起\u201d",{"D4":2,"D7":2}]]},
+{"t":"你的电脑桌面是什么样的？","o":[["分类清晰的文件夹，按项目归档",{"D1":2}],["满满全是文件，找东西全靠搜索",{"D14":-1}],["铺满表情包和壁纸，工作文件藏在角落",{"D14":2,"D2":2}],["啥都没有，所有东西都在云端",{"D14":-2}]]},
+{"t":"新来的同事向你请教一个你已经做过100遍的事，你：","o":[["耐心教，还整理了文档给他",{"D1":2,"D15":1}],["简单说一下，\u201c你摸索一下就会了\u201d",{"D1":-1}],["教了，但内心觉得\u201c这都不会？\u201d",{"D5":1,"D10":1}],["让他去找文档/找别人，\u201c这块我不太熟了\u201d",{"D3":1,"D2":1}]]},
+{"t":"你每天上厕所的总时长大约：","o":[["5-10分钟，解决生理需求",{"D2":-1}],["15-20分钟，顺便刷刷手机放空",{"D2":2}],["30分钟以上，厕所是我的避难所",{"D2":3}],["看情况，急的时候5分钟，不急的时候……",{"D2":2}]]},
+{"t":"老板在群里@所有人发了一个\u201c鸡汤\u201d，你：","o":[["第一个回复\u201c收到！\u201d然后加三个感叹号",{"D4":2,"D7":2}],["等别人回复后跟着+1",{"D4":1,"D2":1}],["假装没看到",{"D4":-1}],["截屏发朋友圈当段子",{"D11":2,"D2":1}]]},
+{"t":"你因为工作焦虑到失眠，你会：","o":[["起来继续干，反正也睡不着",{"D1":2,"D15":-1,"D5":1}],["给好朋友打电话吐槽到凌晨",{"D5":2,"D10":-1}],["告诉自己\u201c大不了辞职\u201d然后硬撑到天亮",{"D15":2,"D5":1}],["打开招聘APP看机会，心里踏实了一点",{"D11":2,"D15":1}]]},
+{"t":"你在工作中最常被同事评价为：","o":[["靠谱，交给TA就行",{"D1":2,"D15":2,"D6":2}],["好相处，但好像没什么存在感",{"D4":-2,"D6":1,"D7":-1}],["厉害但有点难搞",{"D1":2,"D5":-1,"D7":-2}],["很会来事儿，八面玲珑",{"D4":2,"D7":2,"D11":2}]]},
+{"t":"你每天第一个打开的工作软件是：","o":[["工作沟通工具（钉钉/飞书/企微）",{"D1":2}],["邮箱",{"D1":1,"D4":1}],["微博/小红书/豆瓣/摸鱼用",{"D2":2}],["闹钟，确认一下还有几分钟下班",{"D8":2,"D2":1}]]},
+{"t":"年终述职，你的PPT风格是：","o":[["数据说话，50页干货",{"D1":2,"D12":-1}],["设计感拉满，配色动画一个不少",{"D12":2,"D7":1}],["把日常工作拔高到\u201c战略层面\u201d",{"D12":3,"D4":2}],["PPT？我直接口头说了",{"D12":-2,"D4":-2}]]},
+{"t":"你在工作群里发消息的频率：","o":[["高频，随时同步进展、反馈、讨论",{"D1":2,"D4":2,"D11":1}],["只回被@的消息，从不主动发言",{"D4":-2,"D8":1}],["偶尔发个表情包维持一下活跃度",{"D7":1,"D10":1}],["能私聊绝不在群里说",{"D11":2,"D3":1}]]},
+{"t":"你发现公司有一个人人都在薅的小福利漏洞，你：","o":[["跟着薅，不薅白不薅",{"D2":2,"D3":1}],["不薅，万一被查到了呢",{"D5":1,"D15":-1}],["悄悄告诉领导表忠心",{"D4":2,"D11":1}],["无所谓，根本没注意到有这个漏洞",{"D2":-1,"D11":-1}]]},
+{"t":"被领导当众批评后，你：","o":[["当场反驳，我没错就是没错",{"D5":-2,"D7":-2}],["表面接受，回家哭了/气了2小时",{"D5":2,"D10":2}],["当场认错，然后该怎么干还怎么干",{"D10":2,"D15":2}],["开始认真考虑离职",{"D5":2,"D1":-1}]]},
+{"t":"你点外卖的频率和习惯：","o":[["每天都点，评分4.8以下不点",{"D14":2,"D2":1}],["带饭，健康又省钱",{"D14":1,"D1":1}],["看心情，有时候食堂有时候外卖",{"D14":-1}],["边工作边吃，经常忘了吃饭",{"D1":2,"D8":-1}]]},
+{"t":"跨部门协作时对方不配合，你：","o":[["抄送双方领导，让权力来解决",{"D3":2,"D4":2,"D11":1}],["私下请对方喝奶茶搞好关系",{"D7":2,"D4":1}],["算了，我自己多做一点",{"D6":2,"D15":-1}],["在群里@对方，让所有人看到TA不配合",{"D3":2,"D5":-1}]]},
+{"t":"你最害怕的职场场景是：","o":[["突然被叫去老板办公室\u201c聊两句\u201d",{"D5":2,"D4":-1}],["开会时被突然点名发表意见",{"D5":2,"D9":-1}],["收到\u201c在吗？\u201d然后等半天才来消息",{"D5":2,"D15":-1}],["被迫在年会/团建上台表演",{"D13":-2,"D5":2}]]},
+{"t":"你下班后的状态通常是：","o":[["还有工作消息要回，实质上没下班",{"D1":2,"D8":-1,"D10":1}],["彻底断联，工作？什么工作？",{"D8":2,"D1":-1}],["偶尔看看，但不主动处理",{"D8":1}],["在学新技能/考证，为跳槽做准备",{"D11":2,"D15":1}]]},
+{"t":"同事在你面前疯狂吐槽公司/领导，你：","o":[["跟着一起吐槽，越吐槽越开心",{"D10":-1,"D7":-2}],["微笑倾听，什么都不说",{"D7":2,"D11":2}],["打断并替领导说好话",{"D4":2,"D7":1}],["内心os：\u201c你说的这些我都记下了\u201d",{"D11":2,"D3":1}]]},
+{"t":"如果你能给职场写一条墓志铭，你会选：","o":[["\u201c这里埋着一个永远不会辜负deadline的牛马\u201d",{"D1":2,"D15":2}],["\u201cTA终于不用参加周一早会了\u201d",{"D8":2,"D2":2}],["\u201cTA的人缘比KPI好多了\u201d",{"D4":2,"D7":2,"D11":1}],["\u201cTA从未真正来过，但工资从没少拿\u201d",{"D2":3,"D4":-2}]]}
+];
+
+var P=[
+{"e":"🦎","n":"墙头草牛","en":"CHAMELEON OX","v":{"D1":0,"D2":0,"D3":1,"D4":2,"D5":0,"D6":-1,"D7":2,"D8":0,"D9":1,"D10":2,"D11":2,"D12":0,"D13":0,"D14":0,"D15":0},"q":"你说的都对，我刚才也是这么想的。","d":"你是会议室里的生存大师，永远能在0.3秒内调整自己的立场以匹配发言者的权力等级。你的\u201c同意\u201d有17种表达方式，每种都真诚到让人忘记你3分钟前说的完全相反。你不是没有立场，你的立场就是\u201c活着\u201d。"},
+{"e":"🐴","n":"花活骡子","en":"SHOW-MULE","v":{"D1":1,"D2":0,"D3":0,"D4":2,"D5":0,"D6":0,"D7":2,"D8":0,"D9":0,"D10":1,"D11":0,"D12":3,"D13":0,"D14":0,"D15":0},"q":"工作内容不重要，重要的是怎么呈现。","d":"你的核心竞争力不是做了什么，而是把做了什么说得像改变了世界。一个\u201c发了5封邮件\u201d能被包装成\u201c完成跨部门协同推进\u201d。你的PPT配色永远完美，动画丝滑得像德芙，内容空洞得像沙漠。但没关系，老板就吃这套。"},
+{"e":"🐃","n":"摸鱼水牛","en":"SLACK-BUFFALO","v":{"D1":-2,"D2":3,"D3":0,"D4":-2,"D5":0,"D6":-1,"D7":0,"D8":2,"D9":-1,"D10":0,"D11":0,"D12":0,"D13":0,"D14":0,"D15":0},"q":"上班？我只是来换个地方玩手机。","d":"你的工位上永远开着工作界面，但你的灵魂早已云游四方。你掌握着\u201cAlt+Tab\u201d的肌肉记忆，能在0.2秒内从摸鱼切换到工作状态。你每天的厕所时间比任何同事都长，但不是因为肠胃——是因为短视频。"},
+{"e":"🐂","n":"铁肝耕牛","en":"IRON-OX","v":{"D1":3,"D2":-1,"D3":0,"D4":2,"D5":-1,"D6":0,"D7":0,"D8":-2,"D9":1,"D10":0,"D11":0,"D12":0,"D13":0,"D14":0,"D15":2},"q":"休息？那是效率低下的表现。","d":"你是办公室最早到、最晚走的那个牛马。你的年假永远用不完，你的朋友圈全是加班打卡。你不是热爱工作，你是害怕不工作时的空虚感。同事怕你，老板爱你，你的体检报告怕你。"},
+{"e":"🐑","n":"八卦绵羊","en":"GOSSIP-SHEEP","v":{"D1":0,"D2":1,"D3":0,"D4":0,"D5":0,"D6":0,"D7":1,"D8":0,"D9":0,"D10":0,"D11":3,"D12":0,"D13":1,"D14":0,"D15":0},"q":"公司的秘密，没有我不知道的。","d":"你是公司的情报中枢。谁要离职、谁在暧昧、哪个部门要裁、老板最近心情不好——你总是第一个知道。你的信息网络覆盖整栋大楼，从保洁阿姨到CTO司机都是你的线人。"},
+{"e":"🫏","n":"踢锅骡子","en":"BLAME-MUSTANG","v":{"D1":0,"D2":1,"D3":3,"D4":1,"D5":0,"D6":-1,"D7":1,"D8":0,"D9":0,"D10":1,"D11":1,"D12":0,"D13":0,"D14":0,"D15":0},"q":"这事儿不是我负责的吧？我确认一下邮件。","d":"你是职场太极宗师，任何问题到你手里都能四两拨千斤地转移出去。你的核心技能是\u201c这不是我的OKR\u201d\u201c这个需要拉上XX一起看\u201d\u201c我建议开个会对齐一下\u201d。你不是不负责任，你只是负责\u201c把责任正确地分配给别人\u201d。"},
+{"e":"🎭","n":"装忙犍牛","en":"FAKE-WORK OX","v":{"D1":2,"D2":2,"D3":0,"D4":2,"D5":0,"D6":0,"D7":2,"D8":-1,"D9":0,"D10":1,"D11":0,"D12":1,"D13":0,"D14":0,"D15":0},"q":"走可以，但必须让所有人看到我在加班。","d":"你的工作可能6点就做完了，但你一定会待到9点。你会在7点发一条朋友圈\u201c又是充实的一天\u201d，配一张工位照片。你深谙\u201c被看见的加班\u201d和\u201c真实加班\u201d的区别，你的表演对象只有一个——老板的微信在线状态。"},
+{"e":"🐎","n":"准点脱缰马","en":"ESCAPE-HORSE","v":{"D1":-1,"D2":0,"D3":0,"D4":-1,"D5":0,"D6":0,"D7":-1,"D8":3,"D9":0,"D10":0,"D11":0,"D12":0,"D13":-1,"D14":0,"D15":1},"q":"6点到了，天塌了我也要走。","d":"你是办公室的\u201c灰姑娘\u201d——只不过你的魔法在下班那一刻准时消失。你的速度让同事怀疑你预谋已久，你的坚定让领导欲言又止。不是你不负责任，恰恰相反，你上班8小时的产出等于别人12小时。"},
+{"e":"🐕","n":"舔狗土狗","en":"YES-DOG","v":{"D1":1,"D2":0,"D3":-1,"D4":3,"D5":1,"D6":0,"D7":2,"D8":0,"D9":1,"D10":1,"D11":0,"D12":0,"D13":1,"D14":0,"D15":0},"q":"好的！没问题！我马上处理！（内心：呵呵）","d":"你对老板的每一句话都回复\u201c好的\u201d，速度比外卖骑手接单还快。你的\u201c收到\u201d后面永远跟着三个感叹号。你不是没有想法，你只是觉得\u201c让老板开心\u201d比\u201c把事情做对\u201d重要。"},
+{"e":"✍️","n":"笔墨老牛","en":"INK-OX","v":{"D1":1,"D2":0,"D3":0,"D4":1,"D5":-1,"D6":0,"D7":0,"D8":0,"D9":0,"D10":1,"D11":0,"D12":1,"D13":0,"D14":0,"D15":1},"q":"如我之前邮件中所述（第三次提醒）……","d":"你的邮件措辞精准、语气得体、逻辑无懈可击，每一封都像法律文书。你擅长用\u201ckindly remind\u201d表达\u201c你是不是瞎\u201d，用\u201cper our discussion\u201d表达\u201c你根本没听\u201d。你是职场文字工作的天花板。"},
+{"e":"🚽","n":"坑位水牛","en":"TOILET-BUFFALO","v":{"D1":-1,"D2":3,"D3":0,"D4":-1,"D5":0,"D6":0,"D7":0,"D8":0,"D9":-1,"D10":0,"D11":0,"D12":0,"D13":-1,"D14":1,"D15":0},"q":"厕所是牛马最后的自由领地。","d":"你每天在厕所度过的时间比在会议室有效发言的时间还长。厕所是你的冥想室、你的游乐场、你的避难所。你在马桶上刷完了整本豆瓣书评、追完了半部剧、思考了人生的意义。"},
+{"e":"🐿️","n":"仓鼠型牛马","en":"HOARDER-COW","v":{"D1":0,"D2":1,"D3":0,"D4":0,"D5":0,"D6":0,"D7":0,"D8":0,"D9":0,"D10":0,"D11":0,"D12":0,"D13":0,"D14":3,"D15":0},"q":"这个袋子以后会用到的，一定。","d":"你的工位像一个小型仓库：3包零食、2盆绿植、1个靠垫、若干快递盒、不明用途的数据线……你相信\u201c总有一天用得上\u201d，虽然那个\u201c总有一天\u201d从未到来。你的工位舒适度全公司第一，有效工作面积全公司倒数第一。"},
+{"e":"👻","n":"隐形驴","en":"GHOST-DONKEY","v":{"D1":1,"D2":0,"D3":0,"D4":-2,"D5":0,"D6":2,"D7":-1,"D8":1,"D9":-1,"D10":0,"D11":-1,"D12":0,"D13":-1,"D14":0,"D15":1},"q":"我在不在，好像没人发现过。","d":"你默默干活、默默吃饭、默默下班，存在感约等于办公室的绿萝。年终述职时领导叫不出你的名字，但你的活儿干得比谁都稳。你是公司的隐形骨架——没了你，早晚散架。"},
+{"e":"🌤️","n":"望天老牛","en":"DAYDREAM-OX","v":{"D1":-1,"D2":2,"D3":0,"D4":-1,"D5":0,"D6":0,"D7":1,"D8":1,"D9":-1,"D10":0,"D11":0,"D12":0,"D13":0,"D14":0,"D15":0},"q":"我人在这，但我的灵魂在草原上。","d":"你的眼睛盯着屏幕，但你的大脑已经规划好了今晚的菜单、周末的行程和退休后的生活。你是\u201c在场但缺席\u201d的代言人。你发呆的样子看起来像在深度思考，以至于领导偶尔还会夸你\u201c认真\u201d。"},
+{"e":"⚔️","n":"铁角牦牛","en":"YAK-WARRIOR","v":{"D1":0,"D2":0,"D3":1,"D4":0,"D5":-2,"D6":0,"D7":-1,"D8":0,"D9":1,"D10":-1,"D11":0,"D12":0,"D13":0,"D14":0,"D15":2},"q":"改可以，加钱。","d":"你是甲方和不合理需求的天敌。你不怕得罪人，不怕冲突，你的底线比长城还坚固。\u201c这个做不了\u201d\u201c时间不够\u201d\u201c预算不够\u201d——你说这些话的时候面不改色。客户怕你，但最后都依赖你。"},
+{"e":"📢","n":"打鸡血骡子","en":"HYPE-MULE","v":{"D1":3,"D2":-1,"D3":0,"D4":2,"D5":-1,"D6":0,"D7":0,"D8":-1,"D9":1,"D10":0,"D11":0,"D12":1,"D13":1,"D14":0,"D15":1},"q":"你还没做完？我都做完三个了。","d":"你不仅自己卷，你还感染周围的人。你在群里分享\u201c5点起床的秘密\u201d，你在工位上放成功学书籍，你的口头禅是\u201c今天也是努力的一天\u201d。你是老板最爱的员工，同事最怕的队友。"},
+{"e":"🧘","n":"摆烂神牛","en":"SLACK-GOD OX","v":{"D1":-2,"D2":3,"D3":1,"D4":-1,"D5":0,"D6":0,"D7":1,"D8":2,"D9":-1,"D10":0,"D11":1,"D12":0,"D13":-1,"D14":0,"D15":1},"q":"能躺着绝不坐着，能少干绝不多干。","d":"你是摸鱼界的精神领袖。你发明了一套完整的\u201c最小工作量生存法则\u201d，你的徒弟遍布各部门。你从不多做一件事，但也从不被抓到把柄。你是打工人的隐藏偶像。"},
+{"e":"🍃","n":"极简山羊","en":"MINIMAL-GOAT","v":{"D1":1,"D2":0,"D3":0,"D4":0,"D5":0,"D6":0,"D7":0,"D8":0,"D9":1,"D10":0,"D11":0,"D12":0,"D13":0,"D14":-2,"D15":1},"q":"我的工位只需要一台电脑，其他都是负担。","d":"你的工位干净得像酒店房间——电脑、水杯、笔，没了。你不囤零食不养花不贴便签，你的人生信条是\u201c断舍离\u201d。你的效率很高，因为你从不被杂物分心——但你的同事怀疑你是不是随时准备跑路。"},
+{"e":"😱","n":"社恐犊子","en":"SOCIAL-CALF","v":{"D1":0,"D2":0,"D3":1,"D4":0,"D5":2,"D6":0,"D7":1,"D8":1,"D9":0,"D10":1,"D11":0,"D12":0,"D13":-3,"D14":0,"D15":0},"q":"能发红包就别让我上台。","d":"你听到\u201c团建\u201d两个字就生理不适。年会表演、破冰游戏、真心话大冒险——每一样都是你的酷刑。你会用\u201c身体不适\u201d\u201c家里有事\u201d\u201c猫生病了\u201d等108种理由逃避。"},
+{"e":"🎪","n":"交际花马","en":"PARTY-HORSE","v":{"D1":0,"D2":0,"D3":0,"D4":1,"D5":-1,"D6":0,"D7":1,"D8":0,"D9":1,"D10":0,"D11":1,"D12":0,"D13":3,"D14":0,"D15":0},"q":"来！干杯！下一个节目谁来？我！","d":"你是团建中的灵魂人物，没有你场子就冷了。你能在5分钟内和任何同事称兄道弟，你的祝酒词比HR写的还官方。你是公司社交网络的中心节点，你的人脉比组织架构还好使。"},
+{"e":"🍜","n":"挑食骡子","en":"PICKY-MULE","v":{"D1":0,"D2":1,"D3":0,"D4":0,"D5":0,"D6":0,"D7":0,"D8":0,"D9":0,"D10":0,"D11":0,"D12":0,"D13":0,"D14":2,"D15":0},"q":"4.7分以下的店，不配进我的购物车。","d":"你对午饭的选择比你选对象还认真。你花了40分钟研究外卖评分、对比优惠、阅读差评、最终选了一家4.9分的店——然后觉得\u201c也没有很好吃\u201d。你把\u201c今天吃什么\u201d变成了每天最重要的决策。"},
+{"e":"💧","n":"爱哭牛犊","en":"CRY-CALF","v":{"D1":0,"D2":0,"D3":0,"D4":0,"D5":3,"D6":0,"D7":1,"D8":0,"D9":0,"D10":2,"D11":0,"D12":0,"D13":0,"D14":1,"D15":-1},"q":"没事，我就是眼睛进了点沙子。","d":"你的泪腺比你的工作能力更发达。被批评了会哭、被表扬了会哭、加班到崩溃会哭、看到感人的广告也会哭。你在厕所哭完补好妆出来继续开会，你的坚强和脆弱一样真实。"},
+{"e":"🍳","n":"背锅老驴","en":"BLAME-DONKEY","v":{"D1":1,"D2":0,"D3":-1,"D4":0,"D5":1,"D6":3,"D7":0,"D8":0,"D9":0,"D10":1,"D11":0,"D12":0,"D13":0,"D14":0,"D15":1},"q":"不知道为什么，最后总是我的问题。","d":"你是公司的\u201c背锅侠\u201d——项目黄了你、系统崩了你的、客户跑了还是你的。不是你能力差，是你太好说话、太不争辩、太\u201c顾全大局\u201d。你背过的锅能开一个展览，但你也因此成为了\u201c最可靠的那个人\u201d。"},
+{"e":"🔮","n":"玄学山羊","en":"FENG-SHUI-GOAT","v":{"D1":0,"D2":1,"D3":0,"D4":0,"D5":0,"D6":0,"D7":0,"D8":0,"D9":0,"D10":0,"D11":0,"D12":0,"D13":0,"D14":2,"D15":0},"q":"显示器不能对着门，财位要放绿植。","d":"你对工位的风水布局有着近乎偏执的追求。你的座位朝向、显示器角度、植物摆放都经过\u201c精心设计\u201d。你调整工位的时间可能比工作的时间还长，但你的产出确实不错——因为你在\u201c调整\u201d的过程中充分休息了。"},
+{"e":"📖","n":"吹牛老马","en":"BLOW-HORSE","v":{"D1":0,"D2":1,"D3":0,"D4":1,"D5":0,"D6":0,"D7":1,"D8":0,"D9":0,"D10":0,"D11":0,"D12":3,"D13":0,"D14":0,"D15":0},"q":"完成了3件事，我写成了3页。","d":"你的周报是办公室文学的巅峰之作。一个\u201c跟进项目\u201d能被展开为\u201c深度参与跨部门协同项目推进，通过多轮沟通对齐各方需求，形成可落地的执行方案\u201d。你的文字功力远超你的实际工作量。"},
+{"e":"🛡️","n":"铁甲水牛","en":"ARMOR-BUFFALO","v":{"D1":1,"D2":0,"D3":0,"D4":0,"D5":-2,"D6":-1,"D7":0,"D8":0,"D9":1,"D10":-1,"D11":0,"D12":0,"D13":0,"D14":0,"D15":3},"q":"批评我？好的，然后呢？工作继续。","d":"你是职场中罕见的\u201c刀枪不入\u201d型选手。被骂了不哭、被甩锅了不气、deadline堆成山了不慌。你的心理防线比银行的防火墙还坚固。没人知道你到底是\u201c真的坚强\u201d还是\u201c根本不在乎\u201d。"},
+{"e":"🌊","n":"摆烂老牛","en":"NIHIL-OX","v":{"D1":-2,"D2":2,"D3":0,"D4":-2,"D5":0,"D6":0,"D7":0,"D8":2,"D9":-1,"D10":0,"D11":0,"D12":0,"D13":-1,"D14":0,"D15":0},"q":"努力不一定成功，但不努力一定很舒服。","d":"你不是不想升职加薪，你只是觉得\u201c不值得\u201d。你参透了职场的荒诞本质，选择了最节能的生存方式。你的KPI刚好及格，你的态度刚好不被抓，你的灵魂完全属于下班后的自己。"},
+{"e":"🦊","n":"社交狐狸牛","en":"SOCIAL-OX","v":{"D1":0,"D2":0,"D3":0,"D4":2,"D5":-1,"D6":0,"D7":3,"D8":0,"D9":1,"D10":1,"D11":2,"D12":0,"D13":2,"D14":0,"D15":0},"q":"跟谁都能聊两句，但谁都不是真朋友。","d":"你是职场社交的满级选手。跟领导聊战略、跟同事聊八卦、跟保洁阿姨聊天气，每个关系都恰到好处。你让所有人都觉得\u201c这人挺好\u201d，但没人真正了解你。你是职场最成功的演员，也是最孤独的那个。"}
+];
+
+var H={"e":"🍺","n":"酒鬼骡子","en":"DRUNK-MULE","q":"上班是为了下班后的那杯酒，酒是为了明天还能上班。","d":"你的工作动力只有一个——下班后的快乐。你不是讨厌工作，你只是觉得\u201c人生苦短，不该浪费在工位上\u201d。你是最清醒的牛马，因为你清楚地知道什么才是真正重要的。","trig":[["Q16","C"],["Q20","C"],["Q28","B"]]};
+
+var TAGS=OPT_EMOJI;
+var cur=0,scores={},answers=[];
+var i;for(i=0;i<DK.length;i++)scores[DK[i]]=0;
+
+function show(id){
+  var els=document.querySelectorAll('.S');
+  for(var j=0;j<els.length;j++)els[j].classList.remove('on');
+  document.getElementById(id).classList.add('on');
+  try{window.scrollTo(0,0)}catch(e){}
+}
+
+function renderIntro(){
+  var el=document.getElementById('s0');
+  el.innerHTML='<div class="iw">'+
+    '<div class="ib">\u725B\u9A6C\u9274\u5B9A\u4E2D\u5FC3</div>'+
+    '<div class="id">\uD83D\uDC02</div>'+
+    '<div class="it">\u725B\u9A6C\u9274\u5B9A\u4E2D\u5FC3</div>'+
+    '<div class="is">30\u9898\u6D4B\u51FA\u4F60\u662F\u54EA\u79CD\u725B\u9A6C</div>'+
+    '<div class="fence"></div>'+
+    '<div class="ist">'+
+    '<div><div class="n">30</div><div class="l">\u9053\u7075\u9B42\u62F7\u95EE</div></div>'+
+    '<div><div class="n">15</div><div class="l">\u7EF4\u751F\u5B58\u6307\u6807</div></div>'+
+    '<div><div class="n">28</div><div class="l">\u79CD\u725B\u9A6C\u54C1\u79CD</div></div>'+
+    '</div>'+
+    '<button class="bs" onclick="startQuiz()">\u5F00\u59CB\u9274\u5B9A</button>'+
+    '<div class="ino">\u672C\u6D4B\u8BD5\u57FA\u4E8E\u804C\u573A\u884C\u4E3A\u5FC3\u7406\u5B66\u6A21\u578B\uFF0C\u901A\u8FC730\u9053\u573A\u666F\u5316\u9898\u76EE\uFF0C\u89E3\u6790\u4F60\u572815\u4E2A\u7EF4\u5EA6\u7684\u725B\u9A6C\u4EBA\u683C\u7279\u5F81\uFF0C\u5339\u914D\u6700\u9002\u5408\u4F60\u7684\u725B\u9A6C\u54C1\u79CD\u3002\u7ED3\u679C\u4EC5\u4F9B\u5A31\u4E50\uFF0C\u8BF7\u52FF\u5BF9\u53F7\u5165\u5EA7\uFF08\u597D\u5427\uFF0C\u53EF\u4EE5\uFF09\u3002</div>'+
+    '</div>';
+}
+
+function startQuiz(){
+  cur=0;
+  var i;for(i=0;i<DK.length;i++)scores[DK[i]]=0;
+  answers=[];
+  renderQuestion();
+  show('s1');
+}
+
+function renderQuestion(){
+  var q=Q[cur];
+  var pct=((cur)/30*100).toFixed(0);
+  var h='<div class="qh"><div class="pb"><div class="pf" style="width:'+pct+'%"></div></div><div class="ptx">'+(cur+1)+' / 30<span>\u725B\u9A6C\u4F53\u529B\u6761</span></div></div>';
+  h+='<div class="qb"><div class="qs">';
+  h+='<div class="qt">'+q.t+'</div>';
+  h+='<div class="qo">';
+  for(var i=0;i<q.o.length;i++){
+    h+='<div class="op" onclick="pick('+i+')"><span class="og">'+TAGS[i]+'</span><span>'+q.o[i][0]+'</span></div>';
+  }
+  h+='</div></div></div>';
+  document.getElementById('s1').innerHTML=h;
+}
+
+function pick(idx){
+  var q=Q[cur];
+  var opt=q.o[idx];
+  var sc=opt[1];
+  var k;for(k in sc){if(scores.hasOwnProperty(k))scores[k]+=sc[k];else scores[k]=sc[k];}
+  answers.push({q:cur,a:idx});
+  var ops=document.querySelectorAll('.op');
+  if(ops[idx])ops[idx].classList.add('sel');
+  setTimeout(function(){
+    cur++;
+    if(cur>=Q.length){
+      showResult();
+    }else{
+      renderQuestion();
+    }
+  },280);
+}
+
+function matchPersonality(){
+  var a16=answers[15]?answers[15].a:-1;
+  var a20=answers[19]?answers[19].a:-1;
+  var a28=answers[27]?answers[27].a:-1;
+  if(a16===2&&a20===2&&a28===1){
+    return {type:'hidden',data:H};
+  }
+  var best=null,bestDist=Infinity;
+  for(var i=0;i<P.length;i++){
+    var v=P[i].v;
+    var dist=0;
+    for(var j=0;j<DK.length;j++){
+      var k=DK[j];
+      var target=v[k]||0;
+      var actual=scores[k]||0;
+      var diff=actual-target;
+      dist+=diff*diff;
+    }
+    if(dist<bestDist){
+      bestDist=dist;
+      best={type:'normal',data:P[i],dist:dist};
+    }
+  }
+  return best;
+}
+
+function buildRadarSVG(result){
+  var vals=[];
+  for(var i=0;i<DK.length;i++){
+    var raw=scores[DK[i]]||0;
+    var norm=Math.max(0,Math.min(1,(raw+6)/18));
+    vals.push(norm);
+  }
+  var cx=160,cy=160,r=120;
+  var n=15;
+  var angleStep=2*Math.PI/n;
+  var startAngle=-Math.PI/2;
+  var svg='<svg viewBox="0 0 320 320" class="radar-svg" xmlns="http://www.w3.org/2000/svg">';
+  var lv,pts,lr,a;
+  for(lv=1;lv<=4;lv++){
+    pts=[];
+    lr=r*lv/4;
+    for(var i=0;i<n;i++){
+      a=startAngle+i*angleStep;
+      pts.push((cx+lr*Math.cos(a)).toFixed(1)+','+(cy+lr*Math.sin(a)).toFixed(1));
+    }
+    svg+='<polygon points="'+pts.join(' ')+'" fill="none" stroke="rgba(212,168,83,0.08)" stroke-width="1"/>';
+  }
+  for(var i=0;i<n;i++){
+    a=startAngle+i*angleStep;
+    var ex=cx+r*Math.cos(a);
+    var ey=cy+r*Math.sin(a);
+    svg+='<line x1="'+cx+'" y1="'+cy+'" x2="'+ex.toFixed(1)+'" y2="'+ey.toFixed(1)+'" stroke="rgba(212,168,83,0.1)" stroke-width="0.5"/>';
+  }
+  var dpts=[];
+  for(var i=0;i<n;i++){
+    a=startAngle+i*angleStep;
+    var dr=r*vals[i];
+    dpts.push((cx+dr*Math.cos(a)).toFixed(1)+','+(cy+dr*Math.sin(a)).toFixed(1));
+  }
+  svg+='<polygon points="'+dpts.join(' ')+'" fill="rgba(212,168,83,0.15)" stroke="#D4A853" stroke-width="2"/>';
+  for(var i=0;i<n;i++){
+    a=startAngle+i*angleStep;
+    var dr=r*vals[i];
+    var dx=cx+dr*Math.cos(a);
+    var dy=cy+dr*Math.sin(a);
+    svg+='<circle cx="'+dx.toFixed(1)+'" cy="'+dy.toFixed(1)+'" r="3" fill="#D4A853"/>';
+  }
+  for(var i=0;i<n;i++){
+    a=startAngle+i*angleStep;
+    var lr2=r+22;
+    var lx=cx+lr2*Math.cos(a);
+    var ly=cy+lr2*Math.sin(a);
+    var anchor='middle';
+    if(lx<cx-10)anchor='end';
+    else if(lx>cx+10)anchor='start';
+    svg+='<text x="'+lx.toFixed(1)+'" y="'+(ly+3).toFixed(1)+'" text-anchor="'+anchor+'" fill="#99948a" font-size="9" font-weight="600">'+DN[i]+'</text>';
+  }
+  svg+='</svg>';
+  return svg;
+}
+
+/* ===== 找到最突出的维度（用于证书） ===== */
+function getTopDimensions(count){
+  var arr=[];
+  for(var i=0;i<DK.length;i++){
+    arr.push({name:DN[i],raw:scores[DK[i]]||0});
+  }
+  arr.sort(function(a,b){return Math.abs(b.raw)-Math.abs(a.raw);});
+  return arr.slice(0,count||6);
+}
+
+var lastResult=null;
+
+function showResult(){
+  var result=matchPersonality();
+  if(!result)return;
+  lastResult=result;
+  var d=result.data;
+  var el=document.getElementById('s2');
+  var h='<div class="rw">';
+  h+='<div class="re">';
+  h+='<span class="rem">'+d.e+'</span>';
+  h+='<div class="rn">'+d.n+'</div>';
+  h+='<div class="rne">'+d.en+'</div>';
+  h+='</div>';
+  h+='<div class="rq">'+d.q+'</div>';
+  h+='<div class="rd">'+d.d+'</div>';
+  h+='<div class="rsc">';
+  h+='<div class="rst">\u2014 15\u7EF4\u751F\u5B58\u96F7\u8FBE \u2014</div>';
+  h+=buildRadarSVG(result);
+  h+='</div>';
+  h+='<div class="sc">';
+  h+='<div class="ct"><span class="cb">\u725B\u9A6C\u9274\u5B9A\u4E2D\u5FC3</span><span class="ck">'+(result.type==='hidden'?'\u9690\u85CF\u54C1\u79CD':'\u725B\u9A6C\u54C1\u79CD')+'</span></div>';
+  h+='<div class="ce">'+d.e+'</div>';
+  h+='<div class="cn">'+d.n+'</div>';
+  h+='<div class="cne">'+d.en+'</div>';
+  h+='<div class="cq">'+d.q+'</div>';
+  h+='<div class="cdesc" style="font-size:11px;color:var(--tx2);line-height:1.6;padding:0 20px;margin-top:4px;position:relative;z-index:1;max-height:80px;overflow:hidden">'+d.d+'</div>';
+  h+='<div class="cdv"></div>';
+  h+='<div class="cm">';
+  for(var i=0;i<DK.length;i++){
+    var raw=scores[DK[i]]||0;
+    var pctVal=Math.max(0,Math.min(100,((raw+6)/18)*100));
+    h+='<div class="ci"><span class="cin">'+DN[i]+'</span><div class="cib"><div class="cif" style="width:'+pctVal.toFixed(0)+'%"></div></div><span class="civ">'+raw+'</span></div>';
+  }
+  h+='</div>';
+  h+='<div class="cf"><div class="cft">WORKPLACE SURVIVAL GUIDE \u00B7 \u4EC5\u4F9B\u5A31\u4E50</div></div>';
+  h+='</div>';
+  h+='<div class="br"><button class="b1" onclick="restart()">\u91CD\u65B0\u9274\u5B9A</button><button class="b2" onclick="shareResult()">\uD83D\uDCCC \u5206\u4EAB\u7ED3\u679C</button></div>';
+  h+='<div class="br"><button class="b3" onclick="saveCertificate()" style="flex:1">\uD83D\uDCDC \u4FDD\u5B58\u725B\u9A6C\u8BC1</button></div>';
+  h+='</div>';
+  el.innerHTML=h;
+  show('s2');
+}
+
+function restart(){
+  renderIntro();
+  show('s0');
+}
+
+/* ===== 分享功能 ===== */
+function shareResult(){
+  var card=document.querySelector('.sc');
+  if(!card)return;
+  if(navigator.share){
+    navigator.share({
+      title:'\u6211\u7684\u725B\u9A6C\u9274\u5B9A\u7ED3\u679C',
+      text:'\u6211\u88AB\u9274\u5B9A\u4E3A\u300C'+lastResult.data.n+'\u300D\uFF01\u4F60\u662F\u54EA\u79CD\u725B\u9A6C\uFF1F',
+      url:location.href
+    }).catch(function(){});
+  }else{
+    alert('\u957F\u6309\u5361\u7247\u533A\u57DF\u622A\u56FE\u4FDD\u5B58\u540E\u5206\u4EAB\uFF0C\u6216\u70B9\u51FB\u201C\u4FDD\u5B58\u725B\u9A6C\u8BC1\u201D\u751F\u6210\u8BC1\u4E66\u56FE\u7247\uFF01');
+  }
+}
+
+/* ===== 保存牛马证（Canvas绘制证书图片） ===== */
+function saveCertificate(){
+  if(!lastResult)return;
+  var d=lastResult.data;
+  
+  /* 生成二维码 */
+  var qrDiv=document.getElementById('qrHidden');
+  qrDiv.innerHTML='';
+  
+  var qrUrl=location.href||'https://vercel-deploy-henna-kappa.vercel.app';
+  
+  /* 尝试多种方式生成QR */
+  var qrReady=false;
+  
+  /* 方式1: QRCode库 */
+  if(typeof QRCode!=='undefined'){
+    try{
+      new QRCode(qrDiv,{text:qrUrl,width:200,height:200,colorDark:'#111118',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+      qrReady=true;
+    }catch(e){}
+  }
+  
+  /* 方式2: 如果QRCode没加载，用img标签从API生成 */
+  if(!qrReady){
+    var img=document.createElement('img');
+    img.crossOrigin='anonymous';
+    img.onload=function(){
+      setTimeout(function(){drawCertificate(d,lastResult,qrDiv);},200);
+    };
+    img.onerror=function(){
+      /* 最终fallback */
+      setTimeout(function(){drawCertificate(d,lastResult,qrDiv);},300);
+    };
+    img.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=111118&bgcolor=ffffff&data='+encodeURIComponent(qrUrl);
+    qrDiv.appendChild(img);
+    return; /* 等img加载完再绘制 */
+  }
+  
+  setTimeout(function(){drawCertificate(d,lastResult,qrDiv);},600);
+}
+
+function drawCertificate(d,result,qrDiv){
+  var W=750,H=1400;
+  var cvs=document.getElementById('certCanvas');
+  cvs.width=W;cvs.height=H;
+  var ctx=cvs.getContext('2d');
+  
+  /* Background */
+  var bgGrad=ctx.createLinearGradient(0,0,0,H);
+  bgGrad.addColorStop(0,'#111118');
+  bgGrad.addColorStop(0.5,'#1a1a22');
+  bgGrad.addColorStop(1,'#111118');
+  ctx.fillStyle=bgGrad;
+  ctx.fillRect(0,0,W,H);
+  
+  /* Subtle hoof print pattern */
+  ctx.globalAlpha=0.03;
+  for(var py=0;py<H;py+=80){
+    for(var px=0;px<W;px+=80){
+      ctx.fillStyle='#D4A853';
+      ctx.beginPath();
+      ctx.ellipse(px+20,py+20,5,7,0,0,Math.PI*2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(px+28,py+20,5,7,0,0,Math.PI*2);
+      ctx.fill();
+    }
+  }
+  ctx.globalAlpha=1;
+  
+  /* Border */
+  ctx.strokeStyle='#D4A853';
+  ctx.lineWidth=3;
+  ctx.strokeRect(20,20,W-40,H-40);
+  ctx.strokeStyle='rgba(212,168,83,0.3)';
+  ctx.lineWidth=1;
+  ctx.strokeRect(30,30,W-60,H-60);
+  
+  /* Corner decorations */
+  var corners=[[35,35],[W-55,35],[35,H-55],[W-55,H-55]];
+  ctx.fillStyle='#D4A853';
+  ctx.font='20px serif';
+  var cornerSymbols=['\u2726','\u2726','\u2726','\u2726'];
+  for(var ci=0;ci<4;ci++){
+    ctx.fillText(cornerSymbols[ci],corners[ci][0],corners[ci][1]+16);
+  }
+  
+  /* Title */
+  ctx.textAlign='center';
+  ctx.fillStyle='#D4A853';
+  ctx.font='bold 38px -apple-system,sans-serif';
+  ctx.fillText('\uD83D\uDC02 \u725B\u9A6C\u9274\u5B9A\u4E2D\u5FC3 \uD83D\uDC02',W/2,80);
+  
+  /* Certificate number */
+  var certNo='NM-'+new Date().getFullYear()+'-'+String(Math.floor(Math.random()*900000+100000));
+  ctx.font='14px monospace';
+  ctx.fillStyle='rgba(212,168,83,0.5)';
+  ctx.fillText('\u7F16\u53F7\uFF1A'+certNo,W/2,108);
+  
+  /* Divider line */
+  ctx.strokeStyle='rgba(212,168,83,0.3)';
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(100,125);
+  ctx.lineTo(W-100,125);
+  ctx.stroke();
+  
+  /* Type badge */
+  var badge=result.type==='hidden'?'\u9690\u85CF\u54C1\u79CD':'\u725B\u9A6C\u54C1\u79CD';
+  ctx.font='bold 13px sans-serif';
+  var badgeW=ctx.measureText(badge).width+20;
+  ctx.fillStyle='rgba(212,168,83,0.15)';
+  roundRect(ctx,W/2-badgeW/2,138,badgeW,26,13);
+  ctx.fill();
+  ctx.strokeStyle='rgba(212,168,83,0.4)';
+  ctx.lineWidth=1;
+  roundRect(ctx,W/2-badgeW/2,138,badgeW,26,13);
+  ctx.stroke();
+  ctx.fillStyle='#D4A853';
+  ctx.fillText(badge,W/2,156);
+  
+  /* Big emoji */
+  ctx.font='88px serif';
+  ctx.fillText(d.e,W/2,245);
+  
+  /* Name */
+  ctx.font='bold 36px -apple-system,sans-serif';
+  ctx.fillStyle='#FFFFFF';
+  ctx.fillText(d.n,W/2,305);
+  
+  /* English name */
+  ctx.font='bold 14px monospace';
+  ctx.fillStyle='#D4A853';
+  ctx.fillText(d.en,W/2,332);
+  
+  /* Quote */
+  ctx.font='italic 16px -apple-system,sans-serif';
+  ctx.fillStyle='rgba(212,168,83,0.85)';
+  var quoteLines=wrapText(ctx,'\u201C'+d.q+'\u201D',W-140);
+  for(var qi=0;qi<quoteLines.length;qi++){
+    ctx.fillText(quoteLines[qi],W/2,368+qi*24);
+  }
+  
+  /* Description text */
+  var descY=368+quoteLines.length*24+20;
+  ctx.font='13px -apple-system,sans-serif';
+  ctx.fillStyle='rgba(232,232,240,0.65)';
+  var descLines=wrapText(ctx,d.desc||'',W-120);
+  /* limit to 6 lines to avoid overflow */
+  var maxDescLines=Math.min(descLines.length,6);
+  for(var di=0;di<maxDescLines;di++){
+    ctx.fillText(descLines[di],W/2,descY+di*22);
+  }
+  
+  /* Divider */
+  var divY=descY+maxDescLines*22+15;
+  ctx.strokeStyle='rgba(212,168,83,0.3)';
+  ctx.beginPath();
+  ctx.moveTo(W/2-40,divY);
+  ctx.lineTo(W/2+40,divY);
+  ctx.stroke();
+  
+  /* Top dimensions bar chart */
+  var topDims=getTopDimensions(6);
+  var barStartY=divY+25;
+  var barLeft=75;
+  var barMaxW=W-230;
+  var barH=16;
+  var barGap=28;
+  
+  ctx.textAlign='left';
+  for(var bi=0;bi<topDims.length;bi++){
+    var dim=topDims[bi];
+    var by=barStartY+bi*barGap;
+    var pctVal=Math.max(0,Math.min(100,((dim.raw+6)/18)*100));
+    var fillW=barMaxW*pctVal/100;
+    
+    /* Label */
+    ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle='#99948a';
+    ctx.fillText(dim.name,barLeft,by+2);
+    
+    /* Bar background */
+    ctx.fillStyle='rgba(255,255,255,0.06)';
+    roundRect(ctx,barLeft+72,by-9,barMaxW,barH,4);
+    ctx.fill();
+    
+    /* Bar fill */
+    if(fillW>0){
+      var barGrad=ctx.createLinearGradient(barLeft+72,0,barLeft+72+fillW,0);
+      barGrad.addColorStop(0,'#8B6914');
+      barGrad.addColorStop(1,'#D4A853');
+      ctx.fillStyle=barGrad;
+      roundRect(ctx,barLeft+72,by-9,Math.max(fillW,4),barH,4);
+      ctx.fill();
+    }
+    
+    /* Value */
+    ctx.textAlign='right';
+    ctx.font='bold 11px sans-serif';
+    ctx.fillStyle='#D4A853';
+    ctx.fillText(String(dim.raw),barLeft+72+barMaxW+28,by+2);
+    ctx.textAlign='left';
+  }
+  
+  /* QR Code - bottom center */
+  var qrEndY=barStartY+topDims.length*barGap+20;
+  var qrSize=100;
+  var qrX=W/2-qrSize/2;
+  var qrY=qrEndY;
+  
+  ctx.fillStyle='rgba(255,255,255,0.04)';
+  roundRect(ctx,qrX-15,qrY-12,qrSize+30,qrSize+38,8);
+  ctx.fill();
+  
+  /* Draw QR */
+  var qrImg=qrDiv.querySelector('canvas');
+  var qrImgEl=qrDiv.querySelector('img');
+  if(qrImg){
+    ctx.fillStyle='#FFFFFF';
+    ctx.fillRect(qrX,qrY,qrSize,qrSize);
+    try{ctx.drawImage(qrImg,qrX,qrY,qrSize,qrSize);}catch(e){}
+  }else if(qrImgEl){
+    ctx.fillStyle='#FFFFFF';
+    ctx.fillRect(qrX,qrY,qrSize,qrSize);
+    try{ctx.drawImage(qrImgEl,qrX,qrY,qrSize,qrSize);}catch(e){}
+  }else{
+    ctx.fillStyle='#FFFFFF';
+    ctx.fillRect(qrX,qrY,qrSize,qrSize);
+    ctx.fillStyle='#111118';
+    ctx.font='11px sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText('QR',qrX+qrSize/2,qrY+qrSize/2+4);
+    ctx.textAlign='left';
+  }
+  ctx.textAlign='center';
+  ctx.font='11px sans-serif';
+  ctx.fillStyle='rgba(212,168,83,0.7)';
+  ctx.fillText('\u626B\u7801\u6D4B\u4E00\u6D4B',qrX+qrSize/2,qrY+qrSize+20);
+  ctx.textAlign='left';
+  
+  /* Bottom text */
+  ctx.textAlign='center';
+  ctx.font='11px sans-serif';
+  ctx.fillStyle='rgba(153,148,138,0.4)';
+  ctx.fillText('WORKPLACE SURVIVAL GUIDE \u00B7 \u4EC5\u4F9B\u5A31\u4E50',W/2,H-40);
+  
+  /* Download */
+  try{
+    var link=document.createElement('a');
+    link.download='\u6211\u7684\u725B\u9A6C\u8BC1_'+d.n+'.png';
+    link.href=cvs.toDataURL('image/png');
+    link.click();
+  }catch(e){
+    var dataUrl=cvs.toDataURL('image/png');
+    var win=window.open('');
+    if(win){
+      win.document.write('<img src="'+dataUrl+'" style="max-width:100%"><br><p style="text-align:center;color:#999">\u957F\u6309\u4FDD\u5B58\u56FE\u7247</p>');
+    }
+  }
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function wrapText(ctx,text,maxW){
+  var lines=[];
+  var words=text.split('');
+  var line='';
+  for(var i=0;i<words.length;i++){
+    var test=line+words[i];
+    if(ctx.measureText(test).width>maxW&&line.length>0){
+      lines.push(line);
+      line=words[i];
+    }else{
+      line=test;
+    }
+  }
+  if(line)lines.push(line);
+  return lines;
+}
+
+renderIntro();
+}catch(e){
+  document.body.innerHTML='<div style="padding:40px 20px;text-align:center;color:#fff;font-size:16px;">\u52A0\u8F7D\u5931\u8D25\uFF0C\u8BF7\u5237\u65B0\u91CD\u8BD5<br><br><button onclick="location.reload()" style="background:#D4A853;color:#111;border:none;padding:12px 30px;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;margin-top:10px;">\u5237\u65B0\u9875\u9762</button></div>';
+}
+</script>
+</body>
+</html>
