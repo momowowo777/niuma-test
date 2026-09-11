@@ -290,11 +290,11 @@ function buildRadarSVG(result){
     var norm=Math.max(0,Math.min(1,(raw+6)/18));
     vals.push(norm);
   }
-  var cx=160,cy=160,r=120;
+  var cx=180,cy=180,r=120;
   var n=15;
   var angleStep=2*Math.PI/n;
   var startAngle=-Math.PI/2;
-  var svg='<svg viewBox="0 0 320 320" class="radar-svg" xmlns="http://www.w3.org/2000/svg">';
+  var svg='<svg viewBox="0 0 360 360" class="radar-svg" xmlns="http://www.w3.org/2000/svg">';
   var lv,pts,lr,a;
   for(lv=1;lv<=4;lv++){
     pts=[];
@@ -327,13 +327,13 @@ function buildRadarSVG(result){
   }
   for(var i=0;i<n;i++){
     a=startAngle+i*angleStep;
-    var lr2=r+22;
+    var lr2=r+30;
     var lx=cx+lr2*Math.cos(a);
     var ly=cy+lr2*Math.sin(a);
     var anchor='middle';
-    if(lx<cx-10)anchor='end';
-    else if(lx>cx+10)anchor='start';
-    svg+='<text x="'+lx.toFixed(1)+'" y="'+(ly+3).toFixed(1)+'" text-anchor="'+anchor+'" fill="#99948a" font-size="9" font-weight="600">'+DN[i]+'</text>';
+    if(lx<cx-20)anchor='end';
+    else if(lx>cx+20)anchor='start';
+    svg+='<text x="'+lx.toFixed(1)+'" y="'+(ly+4).toFixed(1)+'" text-anchor="'+anchor+'" fill="#99948a" font-size="10" font-weight="600">'+DN[i]+'</text>';
   }
   svg+='</svg>';
   return svg;
@@ -402,15 +402,30 @@ function restart(){
 function shareResult(){
   var card=document.querySelector('.sc');
   if(!card)return;
+  var shareData={
+    title:'\u6211\u7684\u725B\u9A6C\u9274\u5B9A\u7ED3\u679C',
+    text:'\u6211\u88AB\u9274\u5B9A\u4E3A\u300C'+lastResult.data.n+'\u300D\uFF01\u4F60\u662F\u54EA\u79CD\u725B\u9A6C\uFF1F',
+    url:location.href
+  };
   if(navigator.share){
-    navigator.share({
-      title:'\u6211\u7684\u725B\u9A6C\u9274\u5B9A\u7ED3\u679C',
-      text:'\u6211\u88AB\u9274\u5B9A\u4E3A\u300C'+lastResult.data.n+'\u300D\uFF01\u4F60\u662F\u54EA\u79CD\u725B\u9A6C\uFF1F',
-      url:location.href
-    }).catch(function(){});
+    navigator.share(shareData).then(function(){
+      /* shared successfully */
+    }).catch(function(err){
+      if(err.name!=='AbortError'){
+        showShareFallback();
+      }
+    });
   }else{
-    alert('\u957F\u6309\u5361\u7247\u533A\u57DF\u622A\u56FE\u4FDD\u5B58\u540E\u5206\u4EAB\uFF0C\u6216\u70B9\u51FB\u201C\u4FDD\u5B58\u725B\u9A6C\u8BC1\u201D\u751F\u6210\u8BC1\u4E66\u56FE\u7247\uFF01');
+    showShareFallback();
   }
+}
+
+function showShareFallback(){
+  var tip=document.createElement('div');
+  tip.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;cursor:pointer';
+  tip.innerHTML='<div style="color:#fff;font-size:16px;text-align:center;margin-bottom:20px">\u70B9\u51FB\u53F3\u4E0A\u89D2 <span style="font-size:20px">\u22EF</span> \u9009\u62E9\u201C\u53D1\u9001\u7ED9\u670B\u53CB\u201D\u5206\u4EAB</div><div style="color:#D4A853;font-size:40px;margin-bottom:30px">\u2197\uFE0F</div><div style="color:rgba(255,255,255,0.5);font-size:13px">\u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u5173\u95ED</div>';
+  tip.onclick=function(){tip.remove();};
+  document.body.appendChild(tip);
 }
 
 /* ===== 保存牛马证（Canvas绘制证书图片） ===== */
@@ -455,177 +470,160 @@ function saveCertificate(){
 }
 
 function drawCertificate(d,result,qrDiv){
-  var W=750,H=1400;
+  var W=640,H=960;
   var cvs=document.getElementById('certCanvas');
   cvs.width=W;cvs.height=H;
   var ctx=cvs.getContext('2d');
   
-  /* Background */
+  /* Background - dark greenish like 图二 */
   var bgGrad=ctx.createLinearGradient(0,0,0,H);
-  bgGrad.addColorStop(0,'#111118');
-  bgGrad.addColorStop(0.5,'#1a1a22');
-  bgGrad.addColorStop(1,'#111118');
+  bgGrad.addColorStop(0,'#1a2418');
+  bgGrad.addColorStop(0.5,'#1e2a1c');
+  bgGrad.addColorStop(1,'#1a2418');
   ctx.fillStyle=bgGrad;
   ctx.fillRect(0,0,W,H);
   
-  /* Subtle hoof print pattern */
-  ctx.globalAlpha=0.03;
-  for(var py=0;py<H;py+=80){
-    for(var px=0;px<W;px+=80){
-      ctx.fillStyle='#D4A853';
-      ctx.beginPath();
-      ctx.ellipse(px+20,py+20,5,7,0,0,Math.PI*2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.ellipse(px+28,py+20,5,7,0,0,Math.PI*2);
-      ctx.fill();
-    }
-  }
-  ctx.globalAlpha=1;
+  /* Rounded card background */
+  ctx.fillStyle='rgba(30,42,28,0.9)';
+  roundRect(ctx,16,16,W-32,H-32,16);
+  ctx.fill();
   
   /* Border */
-  ctx.strokeStyle='#D4A853';
-  ctx.lineWidth=3;
-  ctx.strokeRect(20,20,W-40,H-40);
-  ctx.strokeStyle='rgba(212,168,83,0.3)';
+  ctx.strokeStyle='rgba(212,168,83,0.2)';
   ctx.lineWidth=1;
-  ctx.strokeRect(30,30,W-60,H-60);
-  
-  /* Corner decorations */
-  var corners=[[35,35],[W-55,35],[35,H-55],[W-55,H-55]];
-  ctx.fillStyle='#D4A853';
-  ctx.font='20px serif';
-  var cornerSymbols=['\u2726','\u2726','\u2726','\u2726'];
-  for(var ci=0;ci<4;ci++){
-    ctx.fillText(cornerSymbols[ci],corners[ci][0],corners[ci][1]+16);
-  }
-  
-  /* Title */
-  ctx.textAlign='center';
-  ctx.fillStyle='#D4A853';
-  ctx.font='bold 38px -apple-system,sans-serif';
-  ctx.fillText('\uD83D\uDC02 \u725B\u9A6C\u9274\u5B9A\u4E2D\u5FC3 \uD83D\uDC02',W/2,80);
-  
-  /* Certificate number */
-  var certNo='NM-'+new Date().getFullYear()+'-'+String(Math.floor(Math.random()*900000+100000));
-  ctx.font='14px monospace';
-  ctx.fillStyle='rgba(212,168,83,0.5)';
-  ctx.fillText('\u7F16\u53F7\uFF1A'+certNo,W/2,108);
-  
-  /* Divider line */
-  ctx.strokeStyle='rgba(212,168,83,0.3)';
-  ctx.lineWidth=1;
-  ctx.beginPath();
-  ctx.moveTo(100,125);
-  ctx.lineTo(W-100,125);
+  roundRect(ctx,16,16,W-32,H-32,16);
   ctx.stroke();
   
-  /* Type badge */
+  /* Top bar: title left, badge right */
+  ctx.textAlign='left';
+  ctx.font='bold 14px -apple-system,sans-serif';
+  ctx.fillStyle='#D4A853';
+  ctx.fillText('\uD83D\uDC02 \u725B\u9A6C\u9274\u5B9A\u4E2D\u5FC3',30,48);
+  
+  /* Badge */
   var badge=result.type==='hidden'?'\u9690\u85CF\u54C1\u79CD':'\u725B\u9A6C\u54C1\u79CD';
-  ctx.font='bold 13px sans-serif';
-  var badgeW=ctx.measureText(badge).width+20;
+  ctx.font='bold 11px sans-serif';
+  var badgeW=ctx.measureText(badge).width+16;
   ctx.fillStyle='rgba(212,168,83,0.15)';
-  roundRect(ctx,W/2-badgeW/2,138,badgeW,26,13);
+  roundRect(ctx,W-badgeW-30,33,badgeW,22,11);
   ctx.fill();
-  ctx.strokeStyle='rgba(212,168,83,0.4)';
-  ctx.lineWidth=1;
-  roundRect(ctx,W/2-badgeW/2,138,badgeW,26,13);
+  ctx.strokeStyle='rgba(212,168,83,0.3)';
+  roundRect(ctx,W-badgeW-30,33,badgeW,22,11);
   ctx.stroke();
   ctx.fillStyle='#D4A853';
-  ctx.fillText(badge,W/2,156);
-  
-  /* Big emoji */
-  ctx.font='88px serif';
-  ctx.fillText(d.e,W/2,245);
-  
-  /* Name */
-  ctx.font='bold 36px -apple-system,sans-serif';
-  ctx.fillStyle='#FFFFFF';
-  ctx.fillText(d.n,W/2,305);
-  
-  /* English name */
-  ctx.font='bold 14px monospace';
-  ctx.fillStyle='#D4A853';
-  ctx.fillText(d.en,W/2,332);
-  
-  /* Quote */
-  ctx.font='italic 16px -apple-system,sans-serif';
-  ctx.fillStyle='rgba(212,168,83,0.85)';
-  var quoteLines=wrapText(ctx,'\u201C'+d.q+'\u201D',W-140);
-  for(var qi=0;qi<quoteLines.length;qi++){
-    ctx.fillText(quoteLines[qi],W/2,368+qi*24);
-  }
-  
-  /* Description text */
-  var descY=368+quoteLines.length*24+20;
-  ctx.font='13px -apple-system,sans-serif';
-  ctx.fillStyle='rgba(232,232,240,0.65)';
-  var descLines=wrapText(ctx,d.desc||'',W-120);
-  /* limit to 6 lines to avoid overflow */
-  var maxDescLines=Math.min(descLines.length,6);
-  for(var di=0;di<maxDescLines;di++){
-    ctx.fillText(descLines[di],W/2,descY+di*22);
-  }
+  ctx.textAlign='center';
+  ctx.fillText(badge,W-badgeW/2-30,49);
   
   /* Divider */
-  var divY=descY+maxDescLines*22+15;
-  ctx.strokeStyle='rgba(212,168,83,0.3)';
+  ctx.strokeStyle='rgba(212,168,83,0.15)';
   ctx.beginPath();
-  ctx.moveTo(W/2-40,divY);
-  ctx.lineTo(W/2+40,divY);
+  ctx.moveTo(30,62);
+  ctx.lineTo(W-30,62);
   ctx.stroke();
   
-  /* Top dimensions bar chart */
-  var topDims=getTopDimensions(6);
-  var barStartY=divY+25;
-  var barLeft=75;
-  var barMaxW=W-230;
-  var barH=16;
-  var barGap=28;
+  /* Big emoji */
+  ctx.textAlign='center';
+  ctx.font='72px serif';
+  ctx.fillText(d.e,W/2,135);
   
-  ctx.textAlign='left';
-  for(var bi=0;bi<topDims.length;bi++){
-    var dim=topDims[bi];
-    var by=barStartY+bi*barGap;
-    var pctVal=Math.max(0,Math.min(100,((dim.raw+6)/18)*100));
-    var fillW=barMaxW*pctVal/100;
-    
-    /* Label */
-    ctx.font='12px -apple-system,sans-serif';
-    ctx.fillStyle='#99948a';
-    ctx.fillText(dim.name,barLeft,by+2);
-    
-    /* Bar background */
-    ctx.fillStyle='rgba(255,255,255,0.06)';
-    roundRect(ctx,barLeft+72,by-9,barMaxW,barH,4);
-    ctx.fill();
-    
-    /* Bar fill */
-    if(fillW>0){
-      var barGrad=ctx.createLinearGradient(barLeft+72,0,barLeft+72+fillW,0);
-      barGrad.addColorStop(0,'#8B6914');
-      barGrad.addColorStop(1,'#D4A853');
-      ctx.fillStyle=barGrad;
-      roundRect(ctx,barLeft+72,by-9,Math.max(fillW,4),barH,4);
-      ctx.fill();
-    }
-    
-    /* Value */
-    ctx.textAlign='right';
-    ctx.font='bold 11px sans-serif';
-    ctx.fillStyle='#D4A853';
-    ctx.fillText(String(dim.raw),barLeft+72+barMaxW+28,by+2);
-    ctx.textAlign='left';
+  /* Name */
+  ctx.font='bold 32px -apple-system,sans-serif';
+  ctx.fillStyle='#FFFFFF';
+  ctx.fillText(d.n,W/2,182);
+  
+  /* English name */
+  ctx.font='bold 13px monospace';
+  ctx.fillStyle='#D4A853';
+  ctx.letterSpacing='2px';
+  ctx.fillText(d.en,W/2,206);
+  
+  /* Quote */
+  ctx.font='italic 15px -apple-system,sans-serif';
+  ctx.fillStyle='rgba(212,168,83,0.85)';
+  var quoteLines=wrapText(ctx,'\u201C'+d.q+'\u201D',W-80);
+  for(var qi=0;qi<quoteLines.length;qi++){
+    ctx.fillText(quoteLines[qi],W/2,240+qi*22);
   }
   
+  /* Description */
+  var descY=240+quoteLines.length*22+14;
+  ctx.font='12px -apple-system,sans-serif';
+  ctx.fillStyle='rgba(232,232,240,0.6)';
+  var descLines=wrapText(ctx,d.desc||'',W-60);
+  var maxDesc=Math.min(descLines.length,5);
+  for(var di=0;di<maxDesc;di++){
+    ctx.fillText(descLines[di],W/2,descY+di*20);
+  }
+  
+  /* Divider before dimensions */
+  var divY=descY+maxDesc*20+16;
+  ctx.strokeStyle='rgba(212,168,83,0.2)';
+  ctx.beginPath();
+  ctx.moveTo(W/2-30,divY);
+  ctx.lineTo(W/2+30,divY);
+  ctx.stroke();
+  
+  /* Two-column dimension bars (like 图二) */
+  var colW=(W-80)/2;
+  var barStartY=divY+16;
+  var barH=10;
+  var rowH=26;
+  var cols=2;
+  var rows=Math.ceil(DK.length/cols);
+  var midX=W/2-10;
+  
+  for(var ri=0;ri<rows;ri++){
+    for(var ci=0;ci<cols;ci++){
+      var idx=ri*cols+ci;
+      if(idx>=DK.length)break;
+      var dimName=DN[idx];
+      var raw=scores[DK[idx]]||0;
+      var pctVal=Math.max(0,Math.min(100,((raw+6)/18)*100));
+      
+      var colX=ci===0?35:midX+15;
+      var by=barStartY+ri*rowH;
+      
+      /* Label */
+      ctx.textAlign='left';
+      ctx.font='11px -apple-system,sans-serif';
+      ctx.fillStyle='#99948a';
+      ctx.fillText(dimName,colX,by+1);
+      
+      /* Bar background */
+      var barX=colX+58;
+      var barMaxW=colW-80;
+      ctx.fillStyle='rgba(255,255,255,0.06)';
+      roundRect(ctx,barX,by-7,barMaxW,barH,3);
+      ctx.fill();
+      
+      /* Bar fill */
+      var fillW=barMaxW*pctVal/100;
+      if(fillW>0){
+        var barGrad=ctx.createLinearGradient(barX,0,barX+fillW,0);
+        barGrad.addColorStop(0,'#8B6914');
+        barGrad.addColorStop(1,'#D4A853');
+        ctx.fillStyle=barGrad;
+        roundRect(ctx,barX,by-7,Math.max(fillW,3),barH,3);
+        ctx.fill();
+      }
+      
+      /* Value */
+      ctx.textAlign='right';
+      ctx.font='bold 10px sans-serif';
+      ctx.fillStyle='#D4A853';
+      ctx.fillText(String(raw),barX+barMaxW+24,by+1);
+    }
+  }
+  ctx.textAlign='left';
+  
   /* QR Code - bottom center */
-  var qrEndY=barStartY+topDims.length*barGap+20;
-  var qrSize=100;
+  var qrEndY=barStartY+rows*rowH+20;
+  var qrSize=90;
   var qrX=W/2-qrSize/2;
   var qrY=qrEndY;
   
   ctx.fillStyle='rgba(255,255,255,0.04)';
-  roundRect(ctx,qrX-15,qrY-12,qrSize+30,qrSize+38,8);
+  roundRect(ctx,qrX-12,qrY-10,qrSize+24,qrSize+32,6);
   ctx.fill();
   
   /* Draw QR */
@@ -649,16 +647,15 @@ function drawCertificate(d,result,qrDiv){
     ctx.textAlign='left';
   }
   ctx.textAlign='center';
-  ctx.font='11px sans-serif';
+  ctx.font='10px sans-serif';
   ctx.fillStyle='rgba(212,168,83,0.7)';
-  ctx.fillText('\u626B\u7801\u6D4B\u4E00\u6D4B',qrX+qrSize/2,qrY+qrSize+20);
-  ctx.textAlign='left';
+  ctx.fillText('\u626B\u7801\u6D4B\u4E00\u6D4B',qrX+qrSize/2,qrY+qrSize+16);
   
   /* Bottom text */
-  ctx.textAlign='center';
-  ctx.font='11px sans-serif';
-  ctx.fillStyle='rgba(153,148,138,0.4)';
-  ctx.fillText('WORKPLACE SURVIVAL GUIDE \u00B7 \u4EC5\u4F9B\u5A31\u4E50',W/2,H-40);
+  ctx.font='10px sans-serif';
+  ctx.fillStyle='rgba(153,148,138,0.35)';
+  ctx.fillText('WORKPLACE SURVIVAL GUIDE \u00B7 \u4EC5\u4F9B\u5A31\u4E50',W/2,H-30);
+  ctx.textAlign='left';
   
   /* Download */
   try{
