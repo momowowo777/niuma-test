@@ -5,7 +5,28 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=yes">
 <meta name="format-detection" content="telephone=no">
 <title>牛马鉴定中心 | 30题测出你是哪种牛马</title>
-<script src="https://unpkg.com/qrcodejs@1.0.0/qrcode.min.js" onerror="this.src='https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'"></script>
+<meta property="og:title" content="🐂 牛马鉴定中心">
+<meta property="og:description" content="30道题测出你是哪种牛马！28种职场物种等你来鉴定">
+<meta property="og:type" content="website">
+<meta name="description" content="30道题测出你是哪种牛马！墙头草牛、摸鱼水牛、花活骡子...你属于哪种？">
+<script>
+/* QR Code 库加载 - 多CDN容错 */
+(function(){
+  var s=document.createElement('script');
+  s.src='https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js';
+  s.onerror=function(){
+    var s2=document.createElement('script');
+    s2.src='https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+    s2.onerror=function(){
+      var s3=document.createElement('script');
+      s3.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+      document.head.appendChild(s3);
+    };
+    document.head.appendChild(s2);
+  };
+  document.head.appendChild(s);
+})();
+</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#111118;--bg2:#1a1a22;--bg3:#222230;--ac:#D4A853;--ac2:#E8C06A;--acg:rgba(212,168,83,0.15);--tx:#e8e4d8;--tx2:#99948a;--cd:#1e1e28;--bd:#33332a}
@@ -66,7 +87,7 @@ body{margin:0;padding:0;min-height:100vh;display:flex;justify-content:center}
 .rd{font-size:13.5px;line-height:1.85;color:var(--tx2);text-align:justify;padding:0 2px}
 .rsc{width:100%;text-align:center}
 .rst{font-size:12px;color:var(--tx2);margin-bottom:10px;font-weight:600;letter-spacing:1px}
-.radar-svg{max-width:320px;width:100%;height:auto}
+.radar-svg{max-width:400px;width:100%;height:auto;overflow:visible}
 
 /* ===== Card ===== */
 .sc{width:100%;max-width:375px;background:linear-gradient(160deg,#1e1c18,#2a2518 50%,#1e1c18);border-radius:20px;padding:26px 20px;border:1px solid rgba(212,168,83,.2);position:relative;overflow:hidden}
@@ -290,11 +311,11 @@ function buildRadarSVG(result){
     var norm=Math.max(0,Math.min(1,(raw+6)/18));
     vals.push(norm);
   }
-  var cx=180,cy=180,r=120;
+  var cx=220,cy=220,r=120;
   var n=15;
   var angleStep=2*Math.PI/n;
   var startAngle=-Math.PI/2;
-  var svg='<svg viewBox="0 0 360 360" class="radar-svg" xmlns="http://www.w3.org/2000/svg">';
+  var svg='<svg viewBox="0 0 440 440" class="radar-svg" xmlns="http://www.w3.org/2000/svg">';
   var lv,pts,lr,a;
   for(lv=1;lv<=4;lv++){
     pts=[];
@@ -327,13 +348,13 @@ function buildRadarSVG(result){
   }
   for(var i=0;i<n;i++){
     a=startAngle+i*angleStep;
-    var lr2=r+30;
+    var lr2=r+32;
     var lx=cx+lr2*Math.cos(a);
     var ly=cy+lr2*Math.sin(a);
     var anchor='middle';
-    if(lx<cx-20)anchor='end';
-    else if(lx>cx+20)anchor='start';
-    svg+='<text x="'+lx.toFixed(1)+'" y="'+(ly+4).toFixed(1)+'" text-anchor="'+anchor+'" fill="#99948a" font-size="10" font-weight="600">'+DN[i]+'</text>';
+    if(Math.cos(a)<-0.15)anchor='end';
+    else if(Math.cos(a)>0.15)anchor='start';
+    svg+='<text x="'+lx.toFixed(1)+'" y="'+(ly+4).toFixed(1)+'" text-anchor="'+anchor+'" fill="#99948a" font-size="12" font-weight="600" paint-order="stroke" stroke="rgba(17,17,24,0.6)" stroke-width="2">'+DN[i]+'</text>';
   }
   svg+='</svg>';
   return svg;
@@ -400,20 +421,20 @@ function restart(){
 
 /* ===== 分享功能 ===== */
 function shareResult(){
-  var card=document.querySelector('.sc');
-  if(!card)return;
+  var ua=navigator.userAgent.toLowerCase();
+  var isWX=ua.indexOf('micromessenger')!==-1;
+  if(isWX){
+    showShareFallback();
+    return;
+  }
   var shareData={
     title:'\u6211\u7684\u725B\u9A6C\u9274\u5B9A\u7ED3\u679C',
     text:'\u6211\u88AB\u9274\u5B9A\u4E3A\u300C'+lastResult.data.n+'\u300D\uFF01\u4F60\u662F\u54EA\u79CD\u725B\u9A6C\uFF1F',
     url:location.href
   };
   if(navigator.share){
-    navigator.share(shareData).then(function(){
-      /* shared successfully */
-    }).catch(function(err){
-      if(err.name!=='AbortError'){
-        showShareFallback();
-      }
+    navigator.share(shareData).catch(function(){
+      showShareFallback();
     });
   }else{
     showShareFallback();
@@ -422,8 +443,27 @@ function shareResult(){
 
 function showShareFallback(){
   var tip=document.createElement('div');
-  tip.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;cursor:pointer';
-  tip.innerHTML='<div style="color:#fff;font-size:16px;text-align:center;margin-bottom:20px">\u70B9\u51FB\u53F3\u4E0A\u89D2 <span style="font-size:20px">\u22EF</span> \u9009\u62E9\u201C\u53D1\u9001\u7ED9\u670B\u53CB\u201D\u5206\u4EAB</div><div style="color:#D4A853;font-size:40px;margin-bottom:30px">\u2197\uFE0F</div><div style="color:rgba(255,255,255,0.5);font-size:13px">\u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u5173\u95ED</div>';
+  tip.id='shareTip';
+  tip.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.88);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;cursor:pointer;-webkit-tap-highlight-color:transparent';
+  var ua=navigator.userAgent.toLowerCase();
+  var isWX=ua.indexOf('micromessenger')!==-1;
+  var html='';
+  if(isWX){
+    html+='<div style="font-size:50px;margin-bottom:16px">\u2197\uFE0F</div>';
+    html+='<div style="color:#fff;font-size:17px;text-align:center;margin-bottom:12px">\u70B9\u51FB\u53F3\u4E0A\u89D2 <span style="color:#D4A853;font-size:22px">\u22EF</span></div>';
+    html+='<div style="color:rgba(255,255,255,0.7);font-size:14px;text-align:center;margin-bottom:24px">\u9009\u62E9\u201C\u53D1\u9001\u7ED9\u670B\u53CB\u201D\u6216\u201C\u94FE\u63A5\u201D\u5206\u4EAB\u7ED9\u597D\u53CB</div>';
+    html+='<div style="background:rgba(212,168,83,0.15);border:1px solid rgba(212,168,83,0.3);border-radius:12px;padding:16px 20px;margin-bottom:24px;max-width:300px">';
+    html+='<div style="color:#D4A853;font-size:13px;margin-bottom:8px">\uD83D\uDCCC \u66F4\u597D\u7684\u65B9\u5F0F\uFF1A</div>';
+    html+='<div style="color:rgba(255,255,255,0.8);font-size:13px;line-height:1.6">1. \u70B9\u201C\u4FDD\u5B58\u725B\u9A6C\u8BC1\u201D\u4FDD\u5B58\u56FE\u7247</div>';
+    html+='<div style="color:rgba(255,255,255,0.8);font-size:13px;line-height:1.6">2. \u53D1\u670B\u53CB\u5708\u6216\u76F4\u63A5\u53D1\u7ED9\u597D\u53CB</div>';
+    html+='<div style="color:rgba(255,255,255,0.8);font-size:13px;line-height:1.6">3. \u597D\u53CB\u626B\u56FE\u4E2D\u4E8C\u7EF4\u7801\u5373\u53EF\u53C2\u4E0E</div>';
+    html+='</div>';
+  }else{
+    html+='<div style="color:#fff;font-size:16px;text-align:center;margin-bottom:20px">\u70B9\u51FB\u53F3\u4E0A\u89D2 <span style="font-size:20px">\u22EF</span> \u9009\u62E9\u201C\u53D1\u9001\u7ED9\u670B\u53CB\u201D\u5206\u4EAB</div>';
+    html+='<div style="color:#D4A853;font-size:40px;margin-bottom:30px">\u2197\uFE0F</div>';
+  }
+  html+='<div style="color:rgba(255,255,255,0.4);font-size:12px">\u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u5173\u95ED</div>';
+  tip.innerHTML=html;
   tip.onclick=function(){tip.remove();};
   document.body.appendChild(tip);
 }
@@ -432,41 +472,58 @@ function showShareFallback(){
 function saveCertificate(){
   if(!lastResult)return;
   var d=lastResult.data;
-  
-  /* 生成二维码 */
   var qrDiv=document.getElementById('qrHidden');
   qrDiv.innerHTML='';
+  var qrUrl=location.href;
   
-  var qrUrl=location.href||'https://vercel-deploy-henna-kappa.vercel.app';
-  
-  /* 尝试多种方式生成QR */
-  var qrReady=false;
-  
-  /* 方式1: QRCode库 */
   if(typeof QRCode!=='undefined'){
     try{
       new QRCode(qrDiv,{text:qrUrl,width:200,height:200,colorDark:'#111118',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
-      qrReady=true;
-    }catch(e){}
+      setTimeout(function(){drawCertificate(d,lastResult,qrDiv);},500);
+    }catch(e){
+      drawCertificateWithQRFallback(d,lastResult);
+    }
+  }else{
+    /* QRCode库没加载，直接用canvas生成QR */
+    drawCertificateWithQRFallback(d,lastResult);
+  }
+}
+
+/* 不依赖外部库的QR码绘制（从img API获取） */
+function drawCertificateWithQRFallback(d,result){
+  var qrUrl=location.href;
+  var qrDiv=document.getElementById('qrHidden');
+  qrDiv.innerHTML='';
+  
+  /* 尝试多个国内可访问的API */
+  var apis=[
+    'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(qrUrl),
+    'https://www.codeproject.com/KB/scripting/539178/QR-Code-Generator/qr.aspx?d='+encodeURIComponent(qrUrl)+'&s=200'
+  ];
+  
+  var loaded=false;
+  for(var i=0;i<apis.length;i++){
+    (function(apiUrl){
+      var img=new Image();
+      img.crossOrigin='anonymous';
+      img.onload=function(){
+        if(!loaded){
+          loaded=true;
+          qrDiv.appendChild(img);
+          setTimeout(function(){drawCertificate(d,result,qrDiv);},200);
+        }
+      };
+      img.onerror=function(){};
+      img.src=apiUrl;
+    })(apis[i]);
   }
   
-  /* 方式2: 如果QRCode没加载，用img标签从API生成 */
-  if(!qrReady){
-    var img=document.createElement('img');
-    img.crossOrigin='anonymous';
-    img.onload=function(){
-      setTimeout(function(){drawCertificate(d,lastResult,qrDiv);},200);
-    };
-    img.onerror=function(){
-      /* 最终fallback */
-      setTimeout(function(){drawCertificate(d,lastResult,qrDiv);},300);
-    };
-    img.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=111118&bgcolor=ffffff&data='+encodeURIComponent(qrUrl);
-    qrDiv.appendChild(img);
-    return; /* 等img加载完再绘制 */
-  }
-  
-  setTimeout(function(){drawCertificate(d,lastResult,qrDiv);},600);
+  /* 2秒后如果都没加载，直接绘制（无QR） */
+  setTimeout(function(){
+    if(!loaded){
+      drawCertificate(d,result,qrDiv);
+    }
+  },2000);
 }
 
 function drawCertificate(d,result,qrDiv){
@@ -549,7 +606,7 @@ function drawCertificate(d,result,qrDiv){
   var descY=240+quoteLines.length*22+14;
   ctx.font='12px -apple-system,sans-serif';
   ctx.fillStyle='rgba(232,232,240,0.6)';
-  var descLines=wrapText(ctx,d.desc||'',W-60);
+  var descLines=wrapText(ctx,d.d||'',W-60);
   var maxDesc=Math.min(descLines.length,5);
   for(var di=0;di<maxDesc;di++){
     ctx.fillText(descLines[di],W/2,descY+di*20);
@@ -657,19 +714,28 @@ function drawCertificate(d,result,qrDiv){
   ctx.fillText('WORKPLACE SURVIVAL GUIDE \u00B7 \u4EC5\u4F9B\u5A31\u4E50',W/2,H-30);
   ctx.textAlign='left';
   
-  /* Download */
-  try{
-    var link=document.createElement('a');
-    link.download='\u6211\u7684\u725B\u9A6C\u8BC1_'+d.n+'.png';
-    link.href=cvs.toDataURL('image/png');
-    link.click();
-  }catch(e){
-    var dataUrl=cvs.toDataURL('image/png');
-    var win=window.open('');
-    if(win){
-      win.document.write('<img src="'+dataUrl+'" style="max-width:100%"><br><p style="text-align:center;color:#999">\u957F\u6309\u4FDD\u5B58\u56FE\u7247</p>');
+  /* 显示证书图片供查看/保存 */
+  var dataUrl=cvs.toDataURL('image/png');
+  var overlay=document.createElement('div');
+  overlay.id='certOverlay';
+  overlay.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML='<img src="'+dataUrl+'" style="max-width:90%;max-height:75vh;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.5)"><div style="margin-top:16px;display:flex;gap:12px"><button id="certSaveBtn" style="background:#D4A853;color:#111;border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">\uD83D\uDCBE \u4FDD\u5B58\u56FE\u7247</button><button onclick="document.getElementById(\'certOverlay\').remove()" style="background:rgba(255,255,255,0.15);color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;cursor:pointer">\u5173\u95ED</button></div>';
+  document.body.appendChild(overlay);
+  
+  var saveBtn=document.getElementById('certSaveBtn');
+  saveBtn.onclick=function(e){
+    e.stopPropagation();
+    var isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if(isMobile){
+      var w=window.open('');
+      if(w){w.document.write('<img src="'+dataUrl+'" style="max-width:100%">');w.document.write('<br><p style="text-align:center;color:#666;font-size:14px;margin-top:12px">\u957F\u6309\u56FE\u7247\u4FDD\u5B58\u5230\u76F8\u518C</p>');}
+    }else{
+      var link=document.createElement('a');
+      link.download='\u6211\u7684\u725B\u9A6C\u8BC1_'+d.n+'.png';
+      link.href=dataUrl;
+      link.click();
     }
-  }
+  };
 }
 
 function roundRect(ctx,x,y,w,h,r){
