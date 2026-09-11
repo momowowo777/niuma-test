@@ -311,7 +311,7 @@ function buildRadarSVG(result){
     var norm=Math.max(0,Math.min(1,(raw+6)/18));
     vals.push(norm);
   }
-  var cx=220,cy=220,r=120;
+  var cx=220,cy=220,r=110;
   var n=15;
   var angleStep=2*Math.PI/n;
   var startAngle=-Math.PI/2;
@@ -354,7 +354,10 @@ function buildRadarSVG(result){
     var anchor='middle';
     if(Math.cos(a)<-0.15)anchor='end';
     else if(Math.cos(a)>0.15)anchor='start';
-    svg+='<text x="'+lx.toFixed(1)+'" y="'+(ly+4).toFixed(1)+'" text-anchor="'+anchor+'" fill="#99948a" font-size="12" font-weight="600" paint-order="stroke" stroke="rgba(17,17,24,0.6)" stroke-width="2">'+DN[i]+'</text>';
+    var rawLabel=scores[DK[i]]||0;
+    var pctLabel=Math.round(Math.max(0,Math.min(100,((rawLabel+6)/18)*100)));
+    svg+='<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" text-anchor="'+anchor+'" fill="#99948a" font-size="11" font-weight="600" paint-order="stroke" stroke="rgba(17,17,24,0.6)" stroke-width="2">'+DN[i]+'</text>';
+    svg+='<text x="'+lx.toFixed(1)+'" y="'+(ly+14).toFixed(1)+'" text-anchor="'+anchor+'" fill="#D4A853" font-size="12" font-weight="700" paint-order="stroke" stroke="rgba(17,17,24,0.6)" stroke-width="2">'+pctLabel+'</text>';
   }
   svg+='</svg>';
   return svg;
